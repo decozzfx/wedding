@@ -56,7 +56,9 @@
 		<div id="floating-button" class="float">
 			<div class="control-center open">
 				<div class="audio-play">
-					<div data-video="QZng89VxKWg" data-autoplay="0" data-loop="1" id="youtube-audio1"></div>
+					<div id="audio-control">
+						<img id="audio-icon" src="images/audio/play.png" alt="audio"/>
+					</div>
 				</div>
 				<ul class="right-sidebar">
 					<!--gallery-->
@@ -451,112 +453,97 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.0.3/showdown.min.js"></script>
 
 	<script>
-		// NAMA UNDANGAN
-		var url = window.location.href;
-		var urlObj = new URL(url);
-		var namaUndangan = urlObj.searchParams.get("nama");
-		if (namaUndangan) {
-			namaUndangan = namaUndangan.toUpperCase();
-			var elements = document.getElementsByClassName("nama-undangan");
-			for (var i = 0; i < elements.length; i++) {
-				elements[i].innerHTML = namaUndangan;
-			}
-		}
+	// NAMA UNDANGAN
+var url = window.location.href;
+var urlObj = new URL(url);
+var namaUndangan = urlObj.searchParams.get("nama");
+if (namaUndangan) {
+    namaUndangan = namaUndangan.toUpperCase();
+    var elements = document.getElementsByClassName("nama-undangan");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].innerHTML = namaUndangan;
+    }
+}
 
-		// HITUNG MUNDUR
-		day = 31; month = 5 - 1; year = 2025;
-		hour = 10; minute = 0;
-		var d = new Date(year, month, day, hour, minute, 0, 0);
-		simplyCountdown('.simply-countdown-wedding', {
-			year: d.getFullYear(),
-			month: d.getMonth() + 1,
-			day: d.getDate(),
-			hour: d.getHours(),
-			minutes: 0, // Default is 0 [0-59] integer
-			seconds: 0, // Default is 0 [0-59] integer
-			countUp: true
-			// enableUtc: true
-		});
+// HITUNG MUNDUR
+day = 31; month = 5 - 1; year = 2025;
+hour = 10; minute = 0;
+var d = new Date(year, month, day, hour, minute, 0, 0);
+simplyCountdown('.simply-countdown-wedding', {
+    year: d.getFullYear(),
+    month: d.getMonth() + 1,
+    day: d.getDate(),
+    hour: d.getHours(),
+    minutes: 0, // Default is 0 [0-59] integer
+    seconds: 0, // Default is 0 [0-59] integer
+    countUp: true
+    // enableUtc: true
+});
 
-		$('#open-invitation').click(function () {
-			$('#overlay').addClass('hide-overlay');
-			playAudio1();
-			/*yang bagian floating button ada animasinya tapi karena ketutup dulu sama overlay jadinya gak nampak*/
-			/*pengen pas di klik buka undangan baru jalan animasinya*/
-			var c = document.getElementsByClassName('right-sidebar');
-			for (var i = 0; i < c.length; i++) {
-				c[i].classList.add('animate');
-			}
-		});
+// Audio player setup
+var audioPlayer;
+var isPlaying = false;
 
-		function scrollToElement(el) {
-			$("html, body").animate({ scrollTop: $(`#${el}`).offset().top }, 1000);
-		}
+function setupAudio() {
+    audioPlayer = new Audio('/audio/wedding.mp3');
+    audioPlayer.loop = true;
+    
+    // Find the existing audio control element
+    var audioControl = document.getElementById('audio-control');
+    if (!audioControl) {
+        console.error('Audio control element not found');
+        return;
+    }
+    
+    // Set styles and click handler
+    audioControl.style.cssText = 'width:20px;margin:0 auto;cursor:pointer;cursor:hand;';
+    audioControl.onclick = toggleAudio;
+    
+    // Make sure it's visible
+    audioControl.style.display = 'block';
+}
+function toggleAudio() {
+    if (isPlaying) {
+        audioPlayer.pause();
+        isPlaying = false;
+        togglePlayButton(false);
+    } else {
+        audioPlayer.play();
+        isPlaying = true;
+        togglePlayButton(true);
+    }
+}
 
-		// 2. This code loads the IFrame Player API code asynchronously.
-		var tag = document.createElement('script');
+function playAudio() {
+    if (!isPlaying) {
+        audioPlayer.play();
+        isPlaying = true;
+        togglePlayButton(true);
+    }
+}
 
-		tag.src = "https://www.youtube.com/iframe_api";
-		var firstScriptTag = document.getElementsByTagName('script')[0];
-		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+function togglePlayButton(play) {
+    document.getElementById("audio-icon").src = play ? 
+        "https://hairullana.github.io/wedding/images/audio/pause.png" : 
+        "https://hairullana.github.io/wedding/images/audio/play.png";
+}
 
-		// 3. This function creates an <iframe> (and YouTube player)
-		//    after the API code downloads.
-		var player1;
-		function onYouTubeIframeAPIReady() {
+// Initialize audio when page loads
+document.addEventListener('DOMContentLoaded', setupAudio);
 
-			var ctrlq1 = document.getElementById("youtube-audio1");
-			ctrlq1.innerHTML = '<img id="youtube-icon1" src=""/><div id="youtube-player1"></div>';
-			ctrlq1.style.cssText = 'width:20px;margin:0 auto;cursor:pointer;cursor:hand;display:none';
-			ctrlq1.onclick = toggleAudio1;
+// Open invitation button
+$('#open-invitation').click(function () {
+    $('#overlay').addClass('hide-overlay');
+    playAudio();
+    var c = document.getElementsByClassName('right-sidebar');
+    for (var i = 0; i < c.length; i++) {
+        c[i].classList.add('animate');
+    }
+});
 
-			player1 = new YT.Player('youtube-player1', {
-				height: '0',
-				width: '0',
-				videoId: ctrlq1.dataset.video,
-				playerVars: {
-					autoplay: ctrlq1.dataset.autoplay,
-					loop: ctrlq1.dataset.loop,
-				},
-				events: {
-					'onReady': onPlayerReady1,
-					'onStateChange': onPlayerStateChange1
-				}
-			});
-		}
-
-		function togglePlayButton1(play) {
-			document.getElementById("youtube-icon1").src = play ? "https://hairullana.github.io/wedding/images/audio/pause.png" : "https://hairullana.github.io/wedding/images/audio/play.png";
-		}
-
-		function toggleAudio1() {
-			if (player1.getPlayerState() == 1 || player1.getPlayerState() == 3) {
-				player1.pauseVideo();
-				togglePlayButton1(false);
-			} else {
-				player1.playVideo();
-				togglePlayButton1(true);
-			}
-		}
-
-		function playAudio1() {
-			if (!(player1.getPlayerState() == 1 || player1.getPlayerState() == 3)) {
-				player1.playVideo();
-				togglePlayButton1(true);
-			}
-		}
-
-		function onPlayerReady1(event) {
-			player1.setPlaybackQuality("small");
-			document.getElementById("youtube-audio1").style.display = "block";
-			togglePlayButton1(player1.getPlayerState() !== 5);
-		}
-
-		function onPlayerStateChange1(event) {
-			if (event.data === 0) {
-				togglePlayButton1(false);
-			}
-		}
+function scrollToElement(el) {
+    $("html, body").animate({ scrollTop: $(`#${el}`).offset().top }, 1000);
+}
 	</script>
 
 </body>
