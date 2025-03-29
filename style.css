@@ -1,10 +1,4 @@
-@font-face {
-  font-family: "icomoon";
-  src: url("../fonts/icomoon/icomoon.eot?srf3rx");
-  src: url("../fonts/icomoon/icomoon.eot?srf3rx#iefix") format("embedded-opentype"), url("../fonts/icomoon/icomoon.ttf?srf3rx") format("truetype"), url("../fonts/icomoon/icomoon.woff?srf3rx") format("woff"), url("../fonts/icomoon/icomoon.svg?srf3rx#icomoon") format("svg");
-  font-weight: normal;
-  font-style: normal;
-}
+
 /* =======================================================
 *
 * 	Template Style
@@ -522,7 +516,6 @@ h1, h2, h3, h4, h5, h6, figure {
   line-height: 1.5;
   font-weight: normal;
   color: #0298d4;
-  font-family: "Satisfy", Arial, serif;
 }
 @media screen and (max-width: 480px) {
   #overlay .content h1 {
@@ -1368,7 +1361,6 @@ form label {
   display: -moz-inline-stack;
   display: inline-block;
   zoom: 1;
-  *display: inline;
   width: 100px;
   height: 100px;
 }
